@@ -2,7 +2,7 @@ package com.cracksn0w.rpgquests.quest.reward;
 
 public class MoneyReward extends Reward {
 
-	private double amount;
+	double amount;
 	
 	public MoneyReward(double amount) {
 		rewardtype = RewardType.MONEY;

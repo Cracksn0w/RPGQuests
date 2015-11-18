@@ -1,4 +1,4 @@
-package com.cracksn0w.rpgquests.quest;
+package com.cracksn0w.rpgquests.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;

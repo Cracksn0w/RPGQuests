@@ -4,7 +4,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemReward extends Reward {
 
-	private ItemStack itemstack;
+	ItemStack itemstack;
 	
 	public ItemReward(ItemStack itemstack) {
 		rewardtype = RewardType.ITEM;
