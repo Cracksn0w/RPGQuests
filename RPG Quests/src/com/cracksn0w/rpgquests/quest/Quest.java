@@ -1,5 +1,6 @@
 package com.cracksn0w.rpgquests.quest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -10,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
 import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
+import com.cracksn0w.rpgquests.quest.requirement.Requirement;
 import com.cracksn0w.rpgquests.quest.reward.Reward;
 
 public class Quest {
@@ -19,19 +21,27 @@ public class Quest {
 	private QuestNPC questnpc;
 	private List<ITask> tasks;
 	private List<Reward> rewards;
+	private List<Requirement> requirements;
 	private boolean enabled;
 	
-	public Quest(String name, int id) {
-		this.name = name;
-		this.id = id;
-	}
-	
-	public Quest(String name, int id, QuestNPC questnpc, List<ITask> tasks, List<Reward> rewards, boolean enabled) {
+	public Quest(String name, int id, QuestNPC questnpc) {
 		this.name = name;
 		this.id = id;
 		this.questnpc = questnpc;
+		
+		tasks = new ArrayList<>();
+		rewards = new ArrayList<>();
+		requirements = new ArrayList<>();
+		enabled = false;
+	}
+	
+	public Quest(String name, int id, String questnpcname, List<ITask> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+		this.name = name;
+		this.id = id;
+		this.questnpc = this.createQuestNPC(questnpcname);
 		this.tasks = tasks;
 		this.rewards = rewards;
+		this.requirements = requirements;
 		this.enabled = enabled;
 	}
 	
