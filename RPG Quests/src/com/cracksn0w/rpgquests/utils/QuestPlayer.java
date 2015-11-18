@@ -1,4 +1,4 @@
-package com.cracksn0w.rpg_quests.utils;
+package com.cracksn0w.rpgquests.utils;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.cracksn0w.rpg_quests;
+package com.cracksn0w.rpgquests;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

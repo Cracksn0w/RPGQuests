@@ -1,4 +1,4 @@
-package com.cracksn0w.rpg_quests.quest.reward;
+package com.cracksn0w.rpgquests.quest.reward;
 
 import org.bukkit.inventory.ItemStack;
 

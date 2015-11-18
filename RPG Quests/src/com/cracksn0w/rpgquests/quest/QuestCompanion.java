@@ -1,6 +1,6 @@
-package com.cracksn0w.rpg_quests.quest;
+package com.cracksn0w.rpgquests.quest;
 
-import com.cracksn0w.rpg_quests.utils.QuestPlayer;
+import com.cracksn0w.rpgquests.utils.QuestPlayer;
 
 public class QuestCompanion {
 

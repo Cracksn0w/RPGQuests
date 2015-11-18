@@ -1,4 +1,4 @@
-package com.cracksn0w.rpg_quests.quest.npc;
+package com.cracksn0w.rpgquests.quest.npc;
 
 import org.bukkit.Location;
 

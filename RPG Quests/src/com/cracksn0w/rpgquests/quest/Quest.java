@@ -1,4 +1,4 @@
-package com.cracksn0w.rpg_quests.quest;
+package com.cracksn0w.rpgquests.quest;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
-import com.cracksn0w.rpg_quests.quest.npc.QuestNPC;
-import com.cracksn0w.rpg_quests.quest.reward.Reward;
+import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
+import com.cracksn0w.rpgquests.quest.reward.Reward;
 
 public class Quest {
 
