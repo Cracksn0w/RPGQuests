@@ -1,0 +1,5 @@
+name: RPG_Quests
+version: 0.1
+author: Cracksn0w
+
+main: com.cracksn0w.rpg_quests.RPGQuests
