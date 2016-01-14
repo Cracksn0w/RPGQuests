@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -13,21 +12,22 @@ import org.bukkit.entity.EntityType;
 import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
 import com.cracksn0w.rpgquests.quest.requirement.Requirement;
 import com.cracksn0w.rpgquests.quest.reward.Reward;
+import com.cracksn0w.rpgquests.quest.task.Task;
 
 public class Quest {
 
 	private String name;
 	private int id;
 	private QuestNPC questnpc;
-	private List<ITask> tasks;
+	private List<Task> tasks;
 	private List<Reward> rewards;
 	private List<Requirement> requirements;
 	private boolean enabled;
 	
-	public Quest(String name, int id, QuestNPC questnpc) {
+	public Quest(String name, int id, String npc_name) {
 		this.name = name;
 		this.id = id;
-		this.questnpc = questnpc;
+		this.questnpc = this.createQuestNPC(npc_name);
 		
 		tasks = new ArrayList<>();
 		rewards = new ArrayList<>();
@@ -35,7 +35,7 @@ public class Quest {
 		enabled = false;
 	}
 	
-	public Quest(String name, int id, String questnpcname, List<ITask> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+	public Quest(String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
 		this.name = name;
 		this.id = id;
 		this.questnpc = this.createQuestNPC(questnpcname);
@@ -57,7 +57,7 @@ public class Quest {
 		return questnpc;
 	}
 	
-	public QuestNPC createQuestNPC(String name) {
+	private QuestNPC createQuestNPC(String name) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
 		
 		return new QuestNPC(npc);
@@ -67,11 +67,11 @@ public class Quest {
 		questnpc.getNPC().spawn(loc);
 	}
 	
-	public void addTask(ITask task) {
+	public void addTask(Task task) {
 		tasks.add(task);
 	}
 	
-	public List<ITask> getTasks() {
+	public List<Task> getTasks() {
 		return tasks;
 	}
 	
@@ -85,6 +85,10 @@ public class Quest {
 	
 	public boolean isEnabled() {
 		return enabled;
+	}
+	
+	public List<Requirement> getRequirements() {
+		return requirements;
 	}
 	
 }

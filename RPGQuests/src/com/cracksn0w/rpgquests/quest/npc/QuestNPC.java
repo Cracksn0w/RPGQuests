@@ -6,12 +6,13 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class QuestNPC {
 
-	NPC npc;
-	int id;
+	private NPC npc;
+	private int id;
 	
 	public QuestNPC(NPC npc) {
 		this.npc = npc;
 		id = npc.getId();
+		npc.setProtected(true);
 	}
 	
 	public NPC getNPC() {
