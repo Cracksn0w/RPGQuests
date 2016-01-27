@@ -17,8 +17,10 @@ public class QuestRegistry {
 	}
 	
 	//creates empty quest
-	public void createQuest(String name, String npc_name) {
-		quests.add(new Quest(name, id_gen.generateID(), npc_name));
+	public Quest createQuest(String name, String npc_name) {
+		Quest quest = new Quest(name, id_gen.generateID(), npc_name);
+		quests.add(quest);
+		return quest;
 	}
 	
 	public ArrayList<Quest> getQuests() {

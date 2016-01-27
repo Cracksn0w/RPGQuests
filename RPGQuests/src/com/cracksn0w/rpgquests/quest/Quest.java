@@ -24,6 +24,13 @@ public class Quest {
 	private List<Requirement> requirements;
 	private boolean enabled;
 	
+	/**
+	 * Erstelle eine neue Quest.
+	 * 
+	 * @param name Der Name der Quest.
+	 * @param id Eine eizigartige ID für die Quest.
+	 * @param npc_name Der Name den der QuestNPC bekommt.
+	 */
 	public Quest(String name, int id, String npc_name) {
 		this.name = name;
 		this.id = id;
@@ -35,6 +42,17 @@ public class Quest {
 		enabled = false;
 	}
 	
+	/**
+	 * Wenn eine Quest aus dem Datei-System geladen wird, muss dieser Konstruktor verwendet werden.
+	 * 
+	 * @param name Name
+	 * @param id ID
+	 * @param questnpcname QuestNPC Name
+	 * @param tasks Aufgaben
+	 * @param rewards Belohnungen
+	 * @param requirements Vorraussetzungen
+	 * @param enabled Aktiviert
+	 */
 	public Quest(String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
 		this.name = name;
 		this.id = id;
@@ -45,18 +63,39 @@ public class Quest {
 		this.enabled = enabled;
 	}
 	
+	/**
+	 * Gibt den Namen der Quest zurück.
+	 * 
+	 * @return Name der Quest.
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Gibt die ID der Quest zurück.
+	 * 
+	 * @return ID der Quest.
+	 */
 	public int getId() {
 		return id;
 	}
 	
+	/**
+	 * Gibt den QuestNPC der Quest zurück.
+	 * 
+	 * @return QuestNPC der Quest.
+	 */
 	public QuestNPC getQuestNPC() {
 		return questnpc;
 	}
 	
+	/**
+	 * Erstell einen QuestNPC für diese Quest.
+	 * 
+	 * @param name Name für den QuestNPC.
+	 * @return Gibt den QuestNPC zurück.
+	 */
 	private QuestNPC createQuestNPC(String name) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
 		
