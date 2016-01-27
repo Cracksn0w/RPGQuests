@@ -5,10 +5,12 @@ import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
+import com.cracksn0w.rpgquests.RPGQuests;
 import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
 import com.cracksn0w.rpgquests.quest.requirement.Requirement;
 import com.cracksn0w.rpgquests.quest.reward.Reward;
@@ -16,6 +18,8 @@ import com.cracksn0w.rpgquests.quest.task.Task;
 
 public class Quest {
 
+	private RPGQuests plugin;
+	
 	private String name;
 	private int id;
 	private QuestNPC questnpc;
@@ -31,7 +35,8 @@ public class Quest {
 	 * @param id Eine eizigartige ID für die Quest.
 	 * @param npc_name Der Name den der QuestNPC bekommt.
 	 */
-	public Quest(String name, int id, String npc_name) {
+	public Quest(RPGQuests plugin, String name, int id, String npc_name) {
+		this.plugin = plugin;
 		this.name = name;
 		this.id = id;
 		this.questnpc = this.createQuestNPC(npc_name);
@@ -53,7 +58,8 @@ public class Quest {
 	 * @param requirements Vorraussetzungen
 	 * @param enabled Aktiviert
 	 */
-	public Quest(String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+	public Quest(RPGQuests plugin, String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+		this.plugin = plugin;
 		this.name = name;
 		this.id = id;
 		this.questnpc = this.createQuestNPC(questnpcname);
@@ -99,7 +105,7 @@ public class Quest {
 	private QuestNPC createQuestNPC(String name) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
 		
-		return new QuestNPC(npc);
+		return new QuestNPC(this, npc);
 	}
 	
 	public void spawnQuestNPC(Location loc) {
@@ -128,6 +134,10 @@ public class Quest {
 	
 	public List<Requirement> getRequirements() {
 		return requirements;
+	}
+	
+	public RPGQuests getPlugin() {
+		return plugin;
 	}
 	
 }

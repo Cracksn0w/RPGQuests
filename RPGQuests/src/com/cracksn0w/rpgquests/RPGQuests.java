@@ -1,5 +1,8 @@
 package com.cracksn0w.rpgquests;
 
+import java.util.ArrayList;
+
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -9,6 +12,7 @@ import com.cracksn0w.rpgquests.quest.Quest;
 import com.cracksn0w.rpgquests.quest.QuestRegistry;
 import com.cracksn0w.rpgquests.quest.reward.MoneyReward;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -33,7 +37,16 @@ public class RPGQuests extends JavaPlugin {
 			return;
 		}
 		
-		quest_registry = new QuestRegistry();
+		quest_registry = new QuestRegistry(this);
+		
+		test();
+	}
+	
+	@Override
+	public void onDisable() {
+		for(Quest quest : quest_registry.getQuests()) {
+			quest.getQuestNPC().getNPC().despawn();
+		}
 	}
 	
 	/**
@@ -55,8 +68,7 @@ public class RPGQuests extends JavaPlugin {
 	 * @return Wurde das Plugin "Citizens" gefunden oder nicht.
 	 */
 	private boolean setupCitizens() {
-		if(this.getServer().getPluginManager().isPluginEnabled("Citizens"))  return true;
-		else return false;
+		return this.getServer().getPluginManager().isPluginEnabled("Citizens");
 	}
 	
 	/**
@@ -72,7 +84,13 @@ public class RPGQuests extends JavaPlugin {
 		CollectTask ct = new CollectTask(new ItemStack(Material.DIAMOND, 5));
 		quest.addTask(ct);
 		
-		quest.spawnQuestNPC(this.getServer().getWorld("world").getSpawnLocation());
+		ArrayList<String> list = new ArrayList<>();
+		list.add("&4Hello my friend how are you?!");
+		list.add("&1Das ist bestimmt deine erste Quest oder?");
+		
+		quest.getQuestNPC().setMessage(list);
+		
+		quest.spawnQuestNPC(new Location(this.getServer().getWorld("world"), 475, 67, -263));
 		
 	}
 	

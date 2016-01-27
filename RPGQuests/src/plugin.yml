@@ -1,5 +1,7 @@
-name: RPG_Quests
+name: RPGQuests
 version: 0.1
 author: Cracksn0w
 
-main: com.cracksn0w.rpg_quests.RPGQuests
+depend: [Vault, Citizens]
+
+main: com.cracksn0w.rpgquests.RPGQuests
