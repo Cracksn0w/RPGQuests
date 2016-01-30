@@ -71,6 +71,10 @@ public class RPGQuests extends JavaPlugin {
 		return this.getServer().getPluginManager().isPluginEnabled("Citizens");
 	}
 	
+	public QuestRegistry getQuestRegistry() {
+		return quest_registry;
+	}
+	
 	/**
 	 * Test methode.
 	 */

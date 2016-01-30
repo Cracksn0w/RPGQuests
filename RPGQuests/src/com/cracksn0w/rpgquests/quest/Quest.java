@@ -120,6 +120,15 @@ public class Quest {
 		return tasks;
 	}
 	
+	public boolean hasTasks() {
+		return !tasks.isEmpty();
+	}
+	
+	public Task getTask(int index) {
+		if(index < tasks.size()) return tasks.get(index);
+		return null;
+	}
+	
 	public void addReward(Reward rwd) {
 		rewards.add(rwd);
 	}

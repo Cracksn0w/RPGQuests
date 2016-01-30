@@ -27,6 +27,12 @@ public class InteractionListener implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, quest_npc.getQuest().getPlugin());
 	}
 	
+	
+    /**
+     * Wird aufgerufen, wenn ein Spieler einen QuestNPC anklickt.
+     * 
+     * @param event Das Event, welches ausgelöst wird.
+     */
 	@EventHandler
 	public void onNPCRightClickEvent(NPCRightClickEvent event) {
 		NPC npc = event.getNPC();
@@ -34,7 +40,7 @@ public class InteractionListener implements Listener {
 		if(quest_npc.getNPC() == npc) {
 			Player player = event.getClicker();
 			
-			if(player.hasPermission(interact_permission)) {
+			if(player.hasPermission(interact_permission) && quest_npc.getQuest().isEnabled()) {
 				player.sendMessage(ChatColor.GOLD + "Quest: " + quest_npc.getQuest().getName());
 				
 				for(String msg_line : quest_npc.getMessage()) {
@@ -43,10 +49,17 @@ public class InteractionListener implements Listener {
 				
 				player.sendMessage(ChatColor.AQUA + "Quest annehmen?");
 				answering_player.add(player);
+			}else {
+				player.sendMessage(ChatColor.RED + "Entweder darfst du keine Quests erledigen oder die Quest ist deaktiviert!");
 			}
 		}
 	}
 	
+	/**
+	 * Diese Methode wird zur Überprüfung der Konversation zwischen NPC und Spieler benutzt.
+	 * 
+	 * @param event Das Event, welches ausgelöst wird.
+	 */
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
@@ -55,11 +68,11 @@ public class InteractionListener implements Listener {
 			String msg = event.getMessage();
 			
 			if(msg.equalsIgnoreCase("ja") || msg.equalsIgnoreCase("yes")) {
-				
+				quest_npc.getQuest().getPlugin().getQuestRegistry().createQuestCompanion(player, quest_npc.getQuest());
 				
 				answering_player.remove(player);
 			}else if(msg.equalsIgnoreCase("nein") || msg.equalsIgnoreCase("no")) {
-				
+				player.sendMessage(ChatColor.AQUA + "Schade! Komm später nochmal vorbei!");
 				
 				answering_player.remove(player);
 			}else {
