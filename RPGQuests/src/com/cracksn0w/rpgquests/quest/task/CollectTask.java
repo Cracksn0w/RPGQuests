@@ -1,23 +1,33 @@
 package com.cracksn0w.rpgquests.quest.task;
 
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 
 public class CollectTask extends Task {
 	
-	private ItemStack item;
+	private Material material;
+	private int amount;
 	
-	public CollectTask(ItemStack item) {
+	public CollectTask(Material material, int amount) {
 		super(TaskType.COLLECT);
 		
-		this.item = item;
+		this.material = material;
+		this.amount = amount;
 	}
 	
-	public void setItemStack(ItemStack stack) {
-		item = stack;
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 	
-	public ItemStack getItemStack() {
-		return item;
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+	
+	public Material getMaterial() {
+		return material;
+	}
+	
+	public int getAmount() {
+		return amount;
 	}
 	
 }

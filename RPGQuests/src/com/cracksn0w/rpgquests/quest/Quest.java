@@ -5,12 +5,12 @@ import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.TraitFactory;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
-import com.cracksn0w.rpgquests.RPGQuests;
+import com.cracksn0w.rpgquests.QuestRegistry;
+import com.cracksn0w.rpgquests.companion.QuestCompanion;
 import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
 import com.cracksn0w.rpgquests.quest.requirement.Requirement;
 import com.cracksn0w.rpgquests.quest.reward.Reward;
@@ -18,7 +18,7 @@ import com.cracksn0w.rpgquests.quest.task.Task;
 
 public class Quest {
 
-	private RPGQuests plugin;
+	private QuestRegistry quest_registry;
 	
 	private String name;
 	private int id;
@@ -35,8 +35,8 @@ public class Quest {
 	 * @param id Eine eizigartige ID für die Quest.
 	 * @param npc_name Der Name den der QuestNPC bekommt.
 	 */
-	public Quest(RPGQuests plugin, String name, int id, String npc_name) {
-		this.plugin = plugin;
+	public Quest(QuestRegistry quest_registry, String name, int id, String npc_name) {
+		this.quest_registry = quest_registry;
 		this.name = name;
 		this.id = id;
 		this.questnpc = this.createQuestNPC(npc_name);
@@ -58,8 +58,8 @@ public class Quest {
 	 * @param requirements Vorraussetzungen
 	 * @param enabled Aktiviert
 	 */
-	public Quest(RPGQuests plugin, String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
-		this.plugin = plugin;
+	public Quest(QuestRegistry quest_registry, String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+		this.quest_registry = quest_registry;
 		this.name = name;
 		this.id = id;
 		this.questnpc = this.createQuestNPC(questnpcname);
@@ -116,6 +116,16 @@ public class Quest {
 		tasks.add(task);
 	}
 	
+	public void removeTask(Task task) {
+		for(QuestCompanion qc : quest_registry.getQCsForCurrentTask(task)) {
+			qc.onCurrentTaskRemoved();
+		}
+		
+		tasks.remove(task);
+		
+		if(tasks.size() == 0) this.setEnabled(false);
+	}
+	
 	public List<Task> getTasks() {
 		return tasks;
 	}
@@ -124,9 +134,15 @@ public class Quest {
 		return !tasks.isEmpty();
 	}
 	
-	public Task getTask(int index) {
-		if(index < tasks.size()) return tasks.get(index);
-		return null;
+	public Task getNextTask(Task task) {
+		if(tasks.size() == 0) return null;
+		else if(task == null) return tasks.get(0);
+		else if(tasks.indexOf(task) + 1 <= tasks.size()) return tasks.get(tasks.indexOf(task) + 1);
+		else return null;
+	}
+	
+	public int getIndexOfTask(Task task) {
+		return tasks.indexOf(task);
 	}
 	
 	public void addReward(Reward rwd) {
@@ -145,8 +161,12 @@ public class Quest {
 		return requirements;
 	}
 	
-	public RPGQuests getPlugin() {
-		return plugin;
+	public QuestRegistry getQuestRegistry() {
+		return quest_registry;
+	}
+	
+	public void setEnabled(boolean bool) {
+		this.enabled = bool;
 	}
 	
 }

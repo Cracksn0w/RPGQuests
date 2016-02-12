@@ -3,9 +3,12 @@ package com.cracksn0w.rpgquests.quest.npc;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.event.HandlerList;
 
 import com.cracksn0w.rpgquests.quest.Quest;
+import com.cracksn0w.rpgquests.quest.npc.listener.InteractionListener;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 public class QuestNPC {
@@ -51,6 +54,11 @@ public class QuestNPC {
 	
 	public Location getLocation() {
 		return npc.getStoredLocation();
+	}
+	
+	public void remove() {
+		CitizensAPI.getNPCRegistry().deregister(npc);
+		HandlerList.unregisterAll(interaction_listener);
 	}
 	
 }

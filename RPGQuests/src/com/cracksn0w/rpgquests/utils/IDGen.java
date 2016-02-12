@@ -2,8 +2,8 @@ package com.cracksn0w.rpgquests.utils;
 
 import java.util.Random;
 
+import com.cracksn0w.rpgquests.QuestRegistry;
 import com.cracksn0w.rpgquests.quest.Quest;
-import com.cracksn0w.rpgquests.quest.QuestRegistry;
 
 public class IDGen {
 

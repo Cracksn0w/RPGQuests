@@ -1,4 +1,4 @@
-package com.cracksn0w.rpgquests.quest.npc;
+package com.cracksn0w.rpgquests.quest.npc.listener;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -24,7 +26,7 @@ public class InteractionListener implements Listener {
 		this.quest_npc = quest_npc;
 		this.answering_player = new ArrayList<>();
 		
-		Bukkit.getPluginManager().registerEvents(this, quest_npc.getQuest().getPlugin());
+		Bukkit.getPluginManager().registerEvents(this, quest_npc.getQuest().getQuestRegistry().getPlugin());
 	}
 	
 	
@@ -41,13 +43,14 @@ public class InteractionListener implements Listener {
 			Player player = event.getClicker();
 			
 			if(player.hasPermission(interact_permission) && quest_npc.getQuest().isEnabled()) {
-				player.sendMessage(ChatColor.GOLD + "Quest: " + quest_npc.getQuest().getName());
+				player.sendMessage(ChatColor.GOLD + " ~ Quest: " + quest_npc.getQuest().getName() + " ~");
+				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ":");
 				
 				for(String msg_line : quest_npc.getMessage()) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg_line));
+					player.sendMessage("  " + msg_line);
 				}
 				
-				player.sendMessage(ChatColor.AQUA + "Quest annehmen?");
+				player.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + "Quest annehmen?");
 				answering_player.add(player);
 			}else {
 				player.sendMessage(ChatColor.RED + "Entweder darfst du keine Quests erledigen oder die Quest ist deaktiviert!");
@@ -68,15 +71,17 @@ public class InteractionListener implements Listener {
 			String msg = event.getMessage();
 			
 			if(msg.equalsIgnoreCase("ja") || msg.equalsIgnoreCase("yes")) {
-				quest_npc.getQuest().getPlugin().getQuestRegistry().createQuestCompanion(player, quest_npc.getQuest());
+				quest_npc.getQuest().getQuestRegistry().createQuestCompanion(player, quest_npc.getQuest());
+				
+				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ": " + ChatColor.WHITE + "Viel Spaﬂ!");
 				
 				answering_player.remove(player);
 			}else if(msg.equalsIgnoreCase("nein") || msg.equalsIgnoreCase("no")) {
-				player.sendMessage(ChatColor.AQUA + "Schade! Komm sp‰ter nochmal vorbei!");
+				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ": " + ChatColor.WHITE + "Schade! Komm sp‰ter nochmal vorbei!");
 				
 				answering_player.remove(player);
 			}else {
-				player.sendMessage(ChatColor.RED + "Ja/Nein or Yes/No!!!");
+				player.sendMessage(ChatColor.RED + "Ja/Nein oder Yes/No!!!");
 			}
 			
 			event.setCancelled(true);

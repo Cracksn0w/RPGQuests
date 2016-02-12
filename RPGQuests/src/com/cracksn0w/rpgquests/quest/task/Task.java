@@ -1,6 +1,6 @@
 package com.cracksn0w.rpgquests.quest.task;
 
-public abstract class Task {
+public class Task {
 	
 	private TaskType type;
 	

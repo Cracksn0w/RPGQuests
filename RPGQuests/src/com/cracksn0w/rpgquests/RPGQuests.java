@@ -4,16 +4,19 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.cracksn0w.rpgquests.quest.Quest;
-import com.cracksn0w.rpgquests.quest.QuestRegistry;
-import com.cracksn0w.rpgquests.quest.reward.MoneyReward;
+import com.cracksn0w.rpgquests.quest.reward.Reward;
+import com.cracksn0w.rpgquests.quest.reward.RewardType;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import com.cracksn0w.rpgquests.quest.task.KillTask;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.economy.Economy;
 
 public class RPGQuests extends JavaPlugin {
@@ -45,7 +48,9 @@ public class RPGQuests extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		for(Quest quest : quest_registry.getQuests()) {
-			quest.getQuestNPC().getNPC().despawn();
+			NPC npc = quest.getQuestNPC().getNPC();
+			npc.despawn();
+			CitizensAPI.getNPCRegistry().deregister(npc);
 		}
 	}
 	
@@ -80,22 +85,34 @@ public class RPGQuests extends JavaPlugin {
 	 */
 	private void test() {
 		
-		Quest quest = quest_registry.createQuest("Test1", "Questman 1");
+		Quest quest = quest_registry.createQuest("Quest 1", "Thomas Müller");
+		quest.setEnabled(true);
 		
-		MoneyReward mr = new MoneyReward(20.0);
+		Reward mr = new Reward(RewardType.MONEY ,20.0);
 		quest.addReward(mr);
 		
-		CollectTask ct = new CollectTask(new ItemStack(Material.DIAMOND, 5));
+		Reward ir = new Reward(RewardType.ITEM, new ItemStack(Material.WOOD, 3));
+		quest.addReward(ir);
+		
+		CollectTask ct = new CollectTask(Material.WOOD, 10);
 		quest.addTask(ct);
 		
+		KillTask kt = new KillTask(EntityType.CHICKEN, 5);
+		quest.addTask(kt);
+		
 		ArrayList<String> list = new ArrayList<>();
-		list.add("&4Hello my friend how are you?!");
-		list.add("&1Das ist bestimmt deine erste Quest oder?");
+		list.add("Das ist eine Quest zum testen der Funktionsweise!");
+		list.add("Funktioniert doch super oder?!");
+		list.add("Man kann machen was man will ist das nicht toll!? :P");
 		
 		quest.getQuestNPC().setMessage(list);
 		
 		quest.spawnQuestNPC(new Location(this.getServer().getWorld("world"), 475, 67, -263));
 		
+	}
+	
+	public Economy getEconomy() {
+		return econ;
 	}
 	
 }

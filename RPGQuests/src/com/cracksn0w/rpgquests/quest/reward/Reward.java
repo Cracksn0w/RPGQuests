@@ -1,9 +1,21 @@
 package com.cracksn0w.rpgquests.quest.reward;
 
-public abstract class Reward {
+public class Reward {
 	
-	RewardType rewardtype;
+	private RewardType rewardtype;
+	private Object reward;
 	
-	public abstract RewardType getRewardType();
+	public Reward(RewardType rewardtype, Object reward) {
+		this.rewardtype = rewardtype;
+		this.reward = reward;
+	}
+	
+	public Object getActualReward() {
+		return reward;
+	}
+	
+	public RewardType getRewardType() {
+		return rewardtype;
+	}
 	
 }

@@ -1,25 +1,25 @@
 package com.cracksn0w.rpgquests.quest.task;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 public class KillTask extends Task {
 
-	private Entity entity;
+	private EntityType entity_type;
 	private int amount;
 	
-	public KillTask(Entity entity, int amount) {
+	public KillTask(EntityType entity_type, int amount) {
 		super(TaskType.KILL);
 		
-		this.entity = entity;
+		this.entity_type = entity_type;
 		this.amount = amount;
 	}
 
-	public void setEntity(Entity entity) {
-		this.entity = entity;
+	public void setEntity(EntityType entity_type) {
+		this.entity_type = entity_type;
 	}
 	
-	public Entity getEntity() {
-		return entity;
+	public EntityType getEntityType() {
+		return entity_type;
 	}
 	
 	public void setAmount(int amount) {
