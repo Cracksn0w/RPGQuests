@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 
 import com.cracksn0w.rpgquests.companion.QuestCompanion;
+import com.cracksn0w.rpgquests.companion.listener.PlayerListener;
 import com.cracksn0w.rpgquests.quest.Quest;
 import com.cracksn0w.rpgquests.quest.task.Task;
 import com.cracksn0w.rpgquests.utils.IDGen;
@@ -18,12 +19,16 @@ public class QuestRegistry {
 	private ArrayList<Quest> quests;
 	private ArrayList<QuestCompanion> quest_companions;
 	
+	private PlayerListener player_listener;
+	
 	public QuestRegistry(RPGQuests plugin) {
 		this.plugin = plugin;
 		this.id_gen = new IDGen(this);
 		
 		this.quests = new ArrayList<>();
 		this.quest_companions = new ArrayList<>();
+		
+		this.registerPlayerListener();
 	}
 	
 	public RPGQuests getPlugin() {
@@ -89,6 +94,26 @@ public class QuestRegistry {
 		}
 		
 		return result;
+	}
+	
+	public ArrayList<QuestCompanion> getQCsForPlayer(Player player) {
+		ArrayList<QuestCompanion> result = new ArrayList<>();
+		
+		for(QuestCompanion qc : quest_companions) {
+			if(qc.getUUIDofPlayer() == player.getUniqueId()) {
+				result.add(qc);
+			}
+		}
+		
+		return result;
+	}
+	
+	private void registerPlayerListener() {
+		player_listener = new PlayerListener(this);
+	}
+	
+	public PlayerListener getPlayerListener() {
+		return player_listener;
 	}
 	
 }

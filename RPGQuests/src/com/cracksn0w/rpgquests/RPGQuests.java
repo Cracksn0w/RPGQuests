@@ -10,6 +10,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.cracksn0w.rpgquests.quest.Quest;
+import com.cracksn0w.rpgquests.quest.requirement.Requirement;
+import com.cracksn0w.rpgquests.quest.requirement.RequirementType;
 import com.cracksn0w.rpgquests.quest.reward.Reward;
 import com.cracksn0w.rpgquests.quest.reward.RewardType;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
@@ -32,6 +34,9 @@ public class RPGQuests extends JavaPlugin {
 	public void onEnable() {
 		if(setupEconomy()) this.getLogger().info("Vault found!");
 		else this.getLogger().severe("Vault not found!");
+		
+		this.getConfig().options().copyHeader(true);
+		this.saveDefaultConfig();
 		
 		if(setupCitizens()) this.getLogger().info("Citizens found!");
 		else {
@@ -88,13 +93,16 @@ public class RPGQuests extends JavaPlugin {
 		Quest quest = quest_registry.createQuest("Quest 1", "Thomas Müller");
 		quest.setEnabled(true);
 		
+		Requirement rq = new Requirement(RequirementType.LEVEL, 1);
+		quest.addRequirement(rq);
+		
 		Reward mr = new Reward(RewardType.MONEY ,20.0);
 		quest.addReward(mr);
 		
 		Reward ir = new Reward(RewardType.ITEM, new ItemStack(Material.WOOD, 3));
 		quest.addReward(ir);
 		
-		CollectTask ct = new CollectTask(Material.WOOD, 10);
+		CollectTask ct = new CollectTask(Material.WOOL, 10, 1);
 		quest.addTask(ct);
 		
 		KillTask kt = new KillTask(EntityType.CHICKEN, 5);

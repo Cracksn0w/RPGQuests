@@ -8,7 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.cracksn0w.rpgquests.quest.Quest;
 import com.cracksn0w.rpgquests.quest.npc.QuestNPC;
+import com.cracksn0w.rpgquests.quest.requirement.Requirement;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -17,6 +19,7 @@ import net.md_5.bungee.api.ChatColor;
 public class InteractionListener implements Listener {
 
 	private QuestNPC quest_npc;
+	private Quest quest;
 	
 	private String interact_permission = "rpgquests.npc.interact";
 	
@@ -24,6 +27,7 @@ public class InteractionListener implements Listener {
 	
 	public InteractionListener(QuestNPC quest_npc) {
 		this.quest_npc = quest_npc;
+		this.quest = quest_npc.getQuest();
 		this.answering_player = new ArrayList<>();
 		
 		Bukkit.getPluginManager().registerEvents(this, quest_npc.getQuest().getQuestRegistry().getPlugin());
@@ -42,9 +46,21 @@ public class InteractionListener implements Listener {
 		if(quest_npc.getNPC() == npc) {
 			Player player = event.getClicker();
 			
-			if(player.hasPermission(interact_permission) && quest_npc.getQuest().isEnabled()) {
-				player.sendMessage(ChatColor.GOLD + " ~ Quest: " + quest_npc.getQuest().getName() + " ~");
-				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ":");
+			if(answering_player.contains(player)) return;
+			
+			if(player.hasPermission(interact_permission) && quest.isEnabled()) {
+				if(quest.isOnQuest(player)) {
+					player.sendMessage(ChatColor.GREEN + npc.getFullName() + ": " + ChatColor.WHITE + "Du arbeitest bereits an dieser Quest!");
+					return;
+				}
+				
+				if(quest.meetRequirements(player) == false) {
+					this.sendRequirementMsg(player);
+					return;
+				}
+				
+				player.sendMessage(ChatColor.GOLD + " ~ Quest: " + quest.getName() + " ~");
+				player.sendMessage(ChatColor.GREEN + npc.getFullName() + ":");
 				
 				for(String msg_line : quest_npc.getMessage()) {
 					player.sendMessage("  " + msg_line);
@@ -71,7 +87,7 @@ public class InteractionListener implements Listener {
 			String msg = event.getMessage();
 			
 			if(msg.equalsIgnoreCase("ja") || msg.equalsIgnoreCase("yes")) {
-				quest_npc.getQuest().getQuestRegistry().createQuestCompanion(player, quest_npc.getQuest());
+				quest.getQuestRegistry().createQuestCompanion(player, quest);
 				
 				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ": " + ChatColor.WHITE + "Viel Spaß!");
 				
@@ -85,6 +101,28 @@ public class InteractionListener implements Listener {
 			}
 			
 			event.setCancelled(true);
+		}
+	}
+	
+	private void sendRequirementMsg(Player player) {
+		player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ": " + ChatColor.WHITE + "Anscheinend erfüllst du nicht alle Vorraussetzungen für diese Aufgabe!");
+		player.sendMessage(ChatColor.BOLD + "" + ChatColor.GOLD + "------ Vorraussetzung/en: ------");
+		
+		for(Requirement rqm : quest.getRequirements()) {
+			switch(rqm.getRequirementType()) {
+			case ITEM:
+				player.sendMessage(ChatColor.GOLD + " - Du must " + rqm.getAddition() + " " + rqm.getRequirement() + " haben!");
+				
+				break;
+			case LEVEL:
+				player.sendMessage(ChatColor.GOLD + " - Du must Level " + rqm.getRequirement() + " sein!");
+				
+				break;
+			default:
+				quest.getQuestRegistry().getPlugin().getLogger().severe("InteractionListener | Quest: " + quest.getName() + " | Unbekannter RequirementType!");
+				
+				break;
+			}
 		}
 	}
 	

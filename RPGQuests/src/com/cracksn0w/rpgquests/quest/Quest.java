@@ -7,7 +7,9 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import com.cracksn0w.rpgquests.QuestRegistry;
 import com.cracksn0w.rpgquests.companion.QuestCompanion;
@@ -153,6 +155,10 @@ public class Quest {
 		return rewards;
 	}
 	
+	public void removeReward(Reward rwd) {
+		rewards.remove(rwd);
+	}
+	
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -161,12 +167,45 @@ public class Quest {
 		return requirements;
 	}
 	
+	public void addRequirement(Requirement rqm) {
+		requirements.add(rqm);
+	}
+	
+	public void removeRequirement(Requirement rqm) {
+		requirements.remove(rqm);
+	}
+	
 	public QuestRegistry getQuestRegistry() {
 		return quest_registry;
 	}
 	
 	public void setEnabled(boolean bool) {
 		this.enabled = bool;
+	}
+	
+	public boolean meetRequirements(Player player) {
+		for(Requirement rqm : this.requirements) {
+			switch(rqm.getRequirementType()) {
+			case ITEM:
+				if(player.getInventory().contains((Material) rqm.getRequirement()) == false) return false;
+				break;
+			case LEVEL:
+				if(player.getLevel() < (int) rqm.getRequirement()) return false;
+				break;
+			default:
+				break;
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean isOnQuest(Player player) {
+		for(QuestCompanion qc : quest_registry.getQCsForPlayer(player)) {
+			if(qc.getQuest() == this) return true;
+		}
+		
+		return false;
 	}
 	
 }

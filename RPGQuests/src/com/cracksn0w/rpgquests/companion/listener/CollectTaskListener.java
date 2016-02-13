@@ -1,44 +1,35 @@
 package com.cracksn0w.rpgquests.companion.listener;
 
-import java.util.ArrayList;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.cracksn0w.rpgquests.companion.QuestCompanion;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
 
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
+
 public class CollectTaskListener implements TaskListener {
 
 	private QuestCompanion quest_companion;
+	private PlayerListener player_listener;
 	
 	private int progress;
 	
-	private ArrayList<Item> dropped_items;
-	private ArrayList<Block> placed_blocks;
-	
 	public CollectTaskListener(QuestCompanion quest_companion) {
 		this.quest_companion = quest_companion;
+		this.player_listener = quest_companion.getQuestRegistry().getPlayerListener();
 		
 		progress = 0;
 		if(quest_companion.getProgress() != null) progress = (int) quest_companion.getProgress();
-		
-		this.dropped_items = new ArrayList<>();
-		this.placed_blocks = new ArrayList<>();
 		
 		Bukkit.getServer().getPluginManager().registerEvents(this, quest_companion.getQuestRegistry().getPlugin());
 	}
@@ -49,9 +40,12 @@ public class CollectTaskListener implements TaskListener {
 			ItemStack stack = event.getItem().getItemStack();
 			CollectTask ct = (CollectTask) quest_companion.getCurrentTask();
 			
-			if(dropped_items.contains(event.getItem())) return;
+			if(player_listener.isDroppedByPlayer(event.getItem())) {
+				player_listener.removeItem(event.getItem());
+				return;
+			}
 			
-			this.validation(event.getPlayer(), stack, ct);
+			this.validate(event.getPlayer(), stack, ct);
 		}
 	}
 	
@@ -59,57 +53,27 @@ public class CollectTaskListener implements TaskListener {
 	public void onInventoryClick(InventoryClickEvent event) {
 		if((Player) event.getWhoClicked() == quest_companion.getPlayer()) {
 			Player player = (Player) event.getWhoClicked();
+			ItemStack stack = event.getCurrentItem();
+			CollectTask ct = (CollectTask) quest_companion.getCurrentTask();
+			InventoryType type = event.getInventory().getType();
 			
-			if(event.getInventory().getType() == InventoryType.WORKBENCH) {
-				if(event.getSlotType() == SlotType.RESULT) {
-					ItemStack stack = event.getCurrentItem();
-					CollectTask ct = (CollectTask) quest_companion.getCurrentTask();
-					
-					this.validation(player, stack, ct);
+			if(event.getSlotType() == SlotType.RESULT) {
+				
+				if(type == InventoryType.WORKBENCH || type == InventoryType.CRAFTING || type == InventoryType.BREWING || type == InventoryType.FURNACE) {
+					validate(player, stack, ct);
 				}
+				
 			}
 		}
 	}
 	
-	@EventHandler
-	public void onBlockBreak(BlockBreakEvent event) {
-		if(placed_blocks.contains(event.getBlock())) {
-			Block b = event.getBlock();
-			
-			for(ItemStack stack : b.getDrops()) {
-				dropped_items.add(b.getWorld().dropItemNaturally(b.getLocation(), stack));
-			}
-			
-			b.setType(Material.AIR, true);
-			
-			event.setCancelled(true);
-		}
-	}
-	
-	@EventHandler
-	public void onItemDropped(PlayerDropItemEvent event) {
-		if(event.getPlayer() == quest_companion.getPlayer()) {
-			dropped_items.add(event.getItemDrop());
-		}else {
-			if(event.getPlayer().getNearbyEntities(50, 50, 50).contains(quest_companion.getPlayer())) {
-				dropped_items.add(event.getItemDrop());
-			}
-		}
-	}
-	
-	@EventHandler
-	public void onBlockPlace(BlockPlaceEvent event) {
-		if(event.getPlayer() == quest_companion.getPlayer()) {
-			placed_blocks.add(event.getBlock());
-		}else {
-			if(event.getPlayer().getNearbyEntities(50, 50, 50).contains(quest_companion.getPlayer())) {
-				placed_blocks.add(event.getBlock());
-			}
-		}
-	}
-	
-	private void validation(Player player, ItemStack stack, CollectTask ct) {
+	@SuppressWarnings("deprecation")
+	private void validate(Player player, ItemStack stack, CollectTask ct) {
 		if(stack.getType() == ct.getMaterial()) {
+			if(stack.getData() != null && ct.getMetadata() != 0) {
+				if(stack.getData().getData() != (byte) ct.getMetadata()) return;
+			}
+			
 			if(progress < ct.getAmount()) {
 				progress += stack.getAmount();
 				
@@ -117,12 +81,13 @@ public class CollectTaskListener implements TaskListener {
 				
 				quest_companion.setProgress(progress);
 				
-				player.sendMessage(ChatColor.GREEN + quest_companion.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + ct.getAmount() + " " + ct.getMaterial() + " gesammelt.");
+				ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMetadata());
+				
+				player.sendMessage(ChatColor.GREEN + quest_companion.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + ct.getAmount() + " " + iteminfo.getName() + " gesammelt.");
 			}
 			
 			if(progress >= ct.getAmount()) {
 				quest_companion.onTaskFinish();
-				dropped_items.clear();
 				HandlerList.unregisterAll(this);
 			}
 		}

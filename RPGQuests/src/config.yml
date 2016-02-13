@@ -1,0 +1,2 @@
+#Bestimmt das Zeitintervall, indem die ArrayListen "dropped_items" und "placed_blocks" gesäubert werden, um Speicher freizugeben! (in Minuten)
+cleanup-intervall: 10

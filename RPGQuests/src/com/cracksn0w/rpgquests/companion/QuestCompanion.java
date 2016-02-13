@@ -20,6 +20,8 @@ import com.cracksn0w.rpgquests.quest.task.KillTask;
 import com.cracksn0w.rpgquests.quest.task.Task;
 
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
 
 public class QuestCompanion {
 
@@ -132,7 +134,7 @@ public class QuestCompanion {
 	public void giveRewards() {
 		Player player = this.getPlayer();
 		
-		player.sendMessage(ChatColor.BOLD + "" + ChatColor.GOLD + "****** Belohnung/en: ******");
+		player.sendMessage(ChatColor.BOLD + "" + ChatColor.GOLD + "------ Belohnung/en: ------");
 		
 		for(Reward reward : quest.getRewards()) {
 			switch(reward.getRewardType()) {
@@ -157,6 +159,8 @@ public class QuestCompanion {
 				
 				break;
 			default:
+				quest_registry.getPlugin().getLogger().severe("QuestCompanion | UUID: " + uuid + " | Unbekannter RewardType!");
+				
 				break;
 			}
 		}
@@ -196,7 +200,8 @@ public class QuestCompanion {
 		switch(current_task.getTaskType()) {
 		case COLLECT:
 			CollectTask ct = (CollectTask) current_task;
-			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Sammel " + ct.getAmount() + " " + ct.getMaterial() + ".");
+			ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMetadata());
+			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Sammel " + ct.getAmount() + " " + iteminfo.getName() + ".");
 			
 			break;
 		case KILL:
@@ -209,6 +214,14 @@ public class QuestCompanion {
 			
 			break;
 		}
+	}
+	
+	public void onPlayerConnect() {
+		this.registerQCListener();
+	}
+	
+	public void onPlayerDisconnect() {
+		this.onDisable();
 	}
 	
 }
