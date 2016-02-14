@@ -60,11 +60,11 @@ public class Quest {
 	 * @param requirements Vorraussetzungen
 	 * @param enabled Aktiviert
 	 */
-	public Quest(QuestRegistry quest_registry, String name, int id, String questnpcname, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+	public Quest(QuestRegistry quest_registry, String name, int id, int questnpcid, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
 		this.quest_registry = quest_registry;
 		this.name = name;
 		this.id = id;
-		this.questnpc = this.createQuestNPC(questnpcname);
+		this.questnpc = this.loadQuestNPC(questnpcid);
 		this.tasks = tasks;
 		this.rewards = rewards;
 		this.requirements = requirements;
@@ -106,6 +106,12 @@ public class Quest {
 	 */
 	private QuestNPC createQuestNPC(String name) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
+		
+		return new QuestNPC(this, npc);
+	}
+	
+	private QuestNPC loadQuestNPC(int id) {
+		NPC npc = CitizensAPI.getNPCRegistry().getById(id);
 		
 		return new QuestNPC(this, npc);
 	}

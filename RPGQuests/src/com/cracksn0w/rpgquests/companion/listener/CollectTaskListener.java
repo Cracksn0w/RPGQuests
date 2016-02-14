@@ -70,8 +70,8 @@ public class CollectTaskListener implements TaskListener {
 	@SuppressWarnings("deprecation")
 	private void validate(Player player, ItemStack stack, CollectTask ct) {
 		if(stack.getType() == ct.getMaterial()) {
-			if(stack.getData() != null && ct.getMetadata() != 0) {
-				if(stack.getData().getData() != (byte) ct.getMetadata()) return;
+			if(stack.getData() != null && ct.getMaterialData() != 0) {
+				if(stack.getData().getData() != (byte) ct.getMaterialData()) return;
 			}
 			
 			if(progress < ct.getAmount()) {
@@ -81,7 +81,7 @@ public class CollectTaskListener implements TaskListener {
 				
 				quest_companion.setProgress(progress);
 				
-				ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMetadata());
+				ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMaterialData());
 				
 				player.sendMessage(ChatColor.GREEN + quest_companion.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + ct.getAmount() + " " + iteminfo.getName() + " gesammelt.");
 			}

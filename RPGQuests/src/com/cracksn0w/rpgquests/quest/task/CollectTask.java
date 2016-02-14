@@ -6,22 +6,14 @@ public class CollectTask extends Task {
 	
 	private Material material;
 	private int amount;
-	private int metadata;
-	
-	public CollectTask(Material material, int amount) {
-		super(TaskType.COLLECT);
-		
-		this.material = material;
-		this.amount = amount;
-		metadata = 0;
-	}
+	private int material_data;
 	
 	public CollectTask(Material material, int amount, int metadata) {
 		super(TaskType.COLLECT);
 		
 		this.material = material;
 		this.amount = amount;
-		this.metadata = metadata;
+		this.material_data = metadata;
 	}
 	
 	public void setMaterial(Material material) {
@@ -32,8 +24,8 @@ public class CollectTask extends Task {
 		this.amount = amount;
 	}
 	
-	public void setMetadata(int metadata) {
-		this.metadata = metadata;
+	public void setMaterialData(int material_data) {
+		this.material_data = material_data;
 	}
 	
 	public Material getMaterial() {
@@ -44,8 +36,8 @@ public class CollectTask extends Task {
 		return amount;
 	}
 	
-	public int getMetadata() {
-		return metadata;
+	public int getMaterialData() {
+		return material_data;
 	}
 	
 }

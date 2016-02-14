@@ -17,8 +17,6 @@ import com.cracksn0w.rpgquests.quest.reward.RewardType;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
 import com.cracksn0w.rpgquests.quest.task.KillTask;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.economy.Economy;
 
 public class RPGQuests extends JavaPlugin {
@@ -52,11 +50,7 @@ public class RPGQuests extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		for(Quest quest : quest_registry.getQuests()) {
-			NPC npc = quest.getQuestNPC().getNPC();
-			npc.despawn();
-			CitizensAPI.getNPCRegistry().deregister(npc);
-		}
+		quest_registry.saveQuests();
 	}
 	
 	/**
@@ -111,7 +105,7 @@ public class RPGQuests extends JavaPlugin {
 		ArrayList<String> list = new ArrayList<>();
 		list.add("Das ist eine Quest zum testen der Funktionsweise!");
 		list.add("Funktioniert doch super oder?!");
-		list.add("Man kann machen was man will ist das nicht toll!? :P");
+		list.add("Man kann machen was man will ist das nicht toll!?");
 		
 		quest.getQuestNPC().setMessage(list);
 		

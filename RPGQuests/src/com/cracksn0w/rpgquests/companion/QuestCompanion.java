@@ -200,13 +200,13 @@ public class QuestCompanion {
 		switch(current_task.getTaskType()) {
 		case COLLECT:
 			CollectTask ct = (CollectTask) current_task;
-			ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMetadata());
+			ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMaterialData());
 			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Sammel " + ct.getAmount() + " " + iteminfo.getName() + ".");
 			
 			break;
 		case KILL:
 			KillTask kt = (KillTask) current_task;
-			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Sammel " + kt.getAmount() + " " + kt.getEntityType() + ".");
+			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Erlege " + kt.getAmount() + " " + kt.getEntityType() + ".");
 			
 			break;
 		default:
