@@ -2,6 +2,7 @@ name: RPGQuests
 version: 0.8.4
 author: Cracksn0w
 
+loadbefore: [Citizens]
 depend: [Vault, Citizens]
 
 main: com.cracksn0w.rpgquests.RPGQuests

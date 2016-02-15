@@ -60,12 +60,13 @@ public class Quest {
 	 * @param requirements Vorraussetzungen
 	 * @param enabled Aktiviert
 	 */
-	public Quest(QuestRegistry quest_registry, String name, int id, int npc_id, Location npc_location, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
+	public Quest(QuestRegistry quest_registry, String name, int id, int npc_id, Location npc_location, List<String> message, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
 		this.quest_registry = quest_registry;
 		this.name = name;
 		this.id = id;
 		this.questnpc = this.loadQuestNPC(npc_id);
 		this.spawnQuestNPC(npc_location);
+		questnpc.setMessage(message);
 		this.tasks = tasks;
 		this.rewards = rewards;
 		this.requirements = requirements;

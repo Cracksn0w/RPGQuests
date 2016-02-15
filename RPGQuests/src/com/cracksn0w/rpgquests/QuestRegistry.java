@@ -3,20 +3,28 @@ package com.cracksn0w.rpgquests;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.cracksn0w.rpgquests.companion.QuestCompanion;
 import com.cracksn0w.rpgquests.companion.listener.PlayerListener;
 import com.cracksn0w.rpgquests.quest.Quest;
 import com.cracksn0w.rpgquests.quest.requirement.Requirement;
+import com.cracksn0w.rpgquests.quest.requirement.RequirementType;
 import com.cracksn0w.rpgquests.quest.reward.Reward;
+import com.cracksn0w.rpgquests.quest.reward.RewardType;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
 import com.cracksn0w.rpgquests.quest.task.KillTask;
 import com.cracksn0w.rpgquests.quest.task.Task;
+import com.cracksn0w.rpgquests.quest.task.TaskType;
 import com.cracksn0w.rpgquests.utils.IDGen;
 
 public class QuestRegistry {
@@ -36,6 +44,8 @@ public class QuestRegistry {
 		
 		this.quests = new ArrayList<>();
 		this.quest_companions = new ArrayList<>();
+		
+		this.loadQuests();
 		
 		this.registerPlayerListener();
 	}
@@ -109,12 +119,20 @@ public class QuestRegistry {
 		ArrayList<QuestCompanion> result = new ArrayList<>();
 		
 		for(QuestCompanion qc : quest_companions) {
-			if(qc.getUUIDofPlayer() == player.getUniqueId()) {
+			if(qc.getUUIDofPlayer().equals(player.getUniqueId())) {
 				result.add(qc);
 			}
 		}
 		
 		return result;
+	}
+	
+	public Quest getById(int id) {
+		for(Quest quest : quests) {
+			if(quest.getId() == id) return quest;
+		}
+		
+		return null;
 	}
 	
 	private void registerPlayerListener() {
@@ -123,6 +141,99 @@ public class QuestRegistry {
 	
 	public PlayerListener getPlayerListener() {
 		return player_listener;
+	}
+	
+	private void loadQuests() {
+		final QuestRegistry reg = this;
+		
+		Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+			
+			public void run() {
+				File folder = new File(plugin.getDataFolder() + "/quests");
+				
+				if(folder.isDirectory() == false) return;
+				
+				for(File file : folder.listFiles()) {
+					FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+					
+					String name = config.getString("name");
+					int id = config.getInt("id");
+					boolean enabled = config.getBoolean("enabled");
+					ArrayList<Task> tasks = new ArrayList<>();
+					ArrayList<Reward> rewards = new ArrayList<>();
+					ArrayList<Requirement> requirements = new ArrayList<>();
+					
+					ConfigurationSection tasks_section = config.getConfigurationSection("tasks");
+					
+					for(String key : tasks_section.getKeys(false)) {
+						ConfigurationSection task_section = tasks_section.getConfigurationSection(key);
+						
+						TaskType type = TaskType.valueOf(task_section.getString("type"));
+						
+						switch(type) {
+						case COLLECT:
+							Material mat = Material.getMaterial(task_section.getString("material"));
+							int amount_ct = task_section.getInt("amount");
+							int mat_data = task_section.getInt("material-data");
+							
+							tasks.add(new CollectTask(mat, amount_ct, mat_data));
+							
+							break;
+						case KILL:
+							EntityType ent = EntityType.valueOf(task_section.getString("entity"));
+							int amount_kt = task_section.getInt("amount");
+							
+							tasks.add(new KillTask(ent, amount_kt));
+							
+							break;
+						default:
+							continue;
+						}
+					}
+					
+					ConfigurationSection rewards_section = config.getConfigurationSection("rewards");
+					
+					for(String key : rewards_section.getKeys(false)) {
+						ConfigurationSection reward_section = rewards_section.getConfigurationSection(key);
+						
+						rewards.add(new Reward(RewardType.valueOf(reward_section.getString("type")), reward_section.get("reward")));
+					}
+					
+					ConfigurationSection requirements_section = config.getConfigurationSection("requirements");
+					
+					for(String key: requirements_section.getKeys(false)) {
+						ConfigurationSection requirement_section = requirements_section.getConfigurationSection(key);
+						
+						RequirementType type = RequirementType.valueOf(requirement_section.getString("type"));
+						Object rqm = requirement_section.get("rqm");
+						
+						switch(type) {
+						case ITEM:
+							rqm = Material.getMaterial((String) rqm);
+							
+							break;
+						case LEVEL:
+							rqm = Integer.parseInt((String) rqm);
+							
+							break;
+						default:
+							continue;
+						}
+						
+						requirements.add(new Requirement(type, rqm));
+					}
+					
+					ConfigurationSection npc_section = config.getConfigurationSection("npc");
+					
+					int npc_id = npc_section.getInt("id");
+					Location npc_loc = (Location) npc_section.get("location");
+					List<String> npc_msg = npc_section.getStringList("message");
+					
+					quests.add(new Quest(reg, name, id, npc_id, npc_loc, npc_msg, tasks, rewards, requirements, enabled));
+				}
+			}
+			
+		}, 40);
 	}
 	
 	//Serealisiert alle Quests
@@ -148,6 +259,7 @@ public class QuestRegistry {
 					
 					ts.set("material", ct.getMaterial().toString());
 					ts.set("amount", ct.getAmount());
+					ts.set("material-data", ct.getMaterialData());
 					continue;
 				case KILL:
 					KillTask kt = (KillTask) task;

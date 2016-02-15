@@ -1,6 +1,7 @@
 package com.cracksn0w.rpgquests.quest.npc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
@@ -17,7 +18,7 @@ public class QuestNPC {
 	private NPC npc;
 	private int id;
 	
-	private ArrayList<String> message;
+	private List<String> message;
 	
 	private InteractionListener interaction_listener;
 	
@@ -32,11 +33,11 @@ public class QuestNPC {
 		interaction_listener = new InteractionListener(this);
 	}
 	
-	public void setMessage(ArrayList<String> message) {
-		this.message = message;
+	public void setMessage(List<String> message2) {
+		this.message = message2;
 	}
 	
-	public ArrayList<String> getMessage() {
+	public List<String> getMessage() {
 		return message;
 	}
 	
