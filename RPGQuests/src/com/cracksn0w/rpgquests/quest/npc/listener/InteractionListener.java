@@ -1,6 +1,7 @@
 package com.cracksn0w.rpgquests.quest.npc.listener;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ public class InteractionListener implements Listener {
 	
 	private String interact_permission = "rpgquests.npc.interact";
 	
-	private ArrayList<Player> answering_player;
+	private ArrayList<UUID> answering_player;
 	
 	public InteractionListener(QuestNPC quest_npc) {
 		this.quest_npc = quest_npc;
@@ -46,7 +47,7 @@ public class InteractionListener implements Listener {
 		if(quest_npc.getNPC() == npc) {
 			Player player = event.getClicker();
 			
-			if(answering_player.contains(player)) return;
+			if(answering_player.contains(player.getUniqueId())) return;
 			
 			if(player.hasPermission(interact_permission) && quest.isEnabled()) {
 				if(quest.isOnQuest(player)) {
@@ -67,7 +68,7 @@ public class InteractionListener implements Listener {
 				}
 				
 				player.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN + "Quest annehmen?");
-				answering_player.add(player);
+				answering_player.add(player.getUniqueId());
 			}else {
 				player.sendMessage(ChatColor.RED + "Entweder darfst du keine Quests erledigen oder die Quest ist deaktiviert!");
 			}
@@ -83,7 +84,7 @@ public class InteractionListener implements Listener {
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		
-		if(answering_player.contains(player)) {
+		if(answering_player.contains(player.getUniqueId())) {
 			String msg = event.getMessage();
 			
 			if(msg.equalsIgnoreCase("ja") || msg.equalsIgnoreCase("yes")) {
@@ -91,11 +92,11 @@ public class InteractionListener implements Listener {
 				
 				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ": " + ChatColor.WHITE + "Viel Spaﬂ!");
 				
-				answering_player.remove(player);
+				answering_player.remove(player.getUniqueId());
 			}else if(msg.equalsIgnoreCase("nein") || msg.equalsIgnoreCase("no")) {
 				player.sendMessage(ChatColor.GREEN + quest_npc.getNPC().getFullName() + ": " + ChatColor.WHITE + "Schade! Komm sp‰ter nochmal vorbei!");
 				
-				answering_player.remove(player);
+				answering_player.remove(player.getUniqueId());
 			}else {
 				player.sendMessage(ChatColor.RED + "Ja/Nein oder Yes/No!!!");
 			}

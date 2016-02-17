@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ public class QuestRegistry {
 	private IDGen id_gen;
 	
 	private RPGQuests plugin;
+	private QuestRegistry instance;
 	
 	private ArrayList<Quest> quests;
 	private ArrayList<QuestCompanion> quest_companions;
@@ -40,6 +42,7 @@ public class QuestRegistry {
 	
 	public QuestRegistry(RPGQuests plugin) {
 		this.plugin = plugin;
+		this.instance = this;
 		this.id_gen = new IDGen(this);
 		
 		this.quests = new ArrayList<>();
@@ -115,11 +118,11 @@ public class QuestRegistry {
 		return result;
 	}
 	
-	public ArrayList<QuestCompanion> getQCsForPlayer(Player player) {
+	public ArrayList<QuestCompanion> getQCsForUUID(UUID uuid) {
 		ArrayList<QuestCompanion> result = new ArrayList<>();
 		
 		for(QuestCompanion qc : quest_companions) {
-			if(qc.getUUIDofPlayer().equals(player.getUniqueId())) {
+			if(qc.getUUID().equals(uuid)) {
 				result.add(qc);
 			}
 		}
@@ -309,6 +312,65 @@ public class QuestRegistry {
 				config.save(file);
 			} catch (IOException e) {
 				plugin.getLogger().severe("Die Quest " + quest.getName() + " konnte nicht gespeichert werden!");
+			}
+		}
+	}
+	
+	public void loadQuestCompanions(final UUID uuid) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			
+			public void run() {
+				File folder = new File(plugin.getDataFolder() + "/companions");
+				
+				if(folder.isDirectory() == false) return;
+				
+				for(File file : folder.listFiles()) {
+					if(file.getName().contains(uuid.toString()) == false) continue;
+					
+					FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+					
+					UUID uuid_qc = UUID.fromString(config.getString("uuid"));
+					Quest quest = instance.getById(config.getInt("quest"));
+					
+					if(quest == null) continue;
+					
+					Task current_task = quest.getTasks().get(config.getInt("current-task"));
+					
+					//skip loading if quest has no tasks anymore (maybe deleted by user)
+					if(current_task == null) {
+						if(quest.getTasks().size() == 0) continue;
+						current_task = quest.getTasks().get(0);
+					}
+					
+					Object progress = config.get("progress");
+					
+					QuestCompanion qc = new QuestCompanion(instance, uuid_qc, quest, current_task, progress);
+					qc.onPlayerConnect();
+					
+					instance.addQuestCompanion(qc);
+				}
+			}
+			
+		});
+	}
+	
+	public void saveQuestCompanions(UUID uuid) {
+		for(QuestCompanion qc : this.getQCsForUUID(uuid)) {
+			File file = new File(plugin.getDataFolder() + "/companions/" + uuid + "_" + qc.getQuest().getId() + ".yml");
+			FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+			
+			config.set("uuid", qc.getUUID().toString());
+			config.set("quest", qc.getQuest().getId());
+			config.set("current-task", qc.getQuest().getIndexOfTask(qc.getCurrentTask()));
+			config.set("progress", qc.getProgress());
+			
+			qc.onDisable();
+			quest_companions.remove(qc);
+			
+			try {
+				config.save(file);
+			} catch (IOException e) {
+				plugin.getLogger().info("Der QuestCompanion von " + qc.getUUID() + " konnte nicht gespeichert werden.");
 			}
 		}
 	}

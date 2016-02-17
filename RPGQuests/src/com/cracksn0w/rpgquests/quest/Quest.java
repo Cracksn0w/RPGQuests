@@ -209,7 +209,7 @@ public class Quest {
 	}
 	
 	public boolean isOnQuest(Player player) {
-		for(QuestCompanion qc : quest_registry.getQCsForPlayer(player)) {
+		for(QuestCompanion qc : quest_registry.getQCsForUUID(player.getUniqueId())) {
 			if(qc.getQuest() == this) return true;
 		}
 		

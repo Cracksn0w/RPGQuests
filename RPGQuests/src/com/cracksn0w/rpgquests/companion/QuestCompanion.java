@@ -1,5 +1,6 @@
 package com.cracksn0w.rpgquests.companion;
 
+import java.io.File;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -64,7 +65,7 @@ public class QuestCompanion {
 		return current_task;
 	}
 	
-	public UUID getUUIDofPlayer() {
+	public UUID getUUID() {
 		return uuid;
 	}
 	
@@ -88,13 +89,7 @@ public class QuestCompanion {
 		Player player = this.getPlayer();
 		
 		if(quest.getTasks().indexOf(current_task) == quest.getTasks().size() - 1) {
-			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Glückwunsch! Du hast die Quest " + quest.getName() + " beendet!");
-			this.giveRewards();
-			
-			//call custom event
-			Bukkit.getServer().getPluginManager().callEvent(new QuestFinishEvent(player, quest));
-			
-			quest_registry.removeQuestCompanion(this);
+			this.onQuestFinish();
 		}else {
 			
 			player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Aufgabe " + (quest.getIndexOfTask(current_task) + 1) + "/" + quest.getTasks().size() + " der Quest " + quest.getName() + " erledigt!");
@@ -108,10 +103,24 @@ public class QuestCompanion {
 		}
 	}
 	
+	public void onQuestFinish() {
+		Player player = this.getPlayer();
+		
+		player.sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Glückwunsch! Du hast die Quest " + quest.getName() + " beendet!");
+		this.giveRewards();
+		
+		//call custom event
+		Bukkit.getServer().getPluginManager().callEvent(new QuestFinishEvent(player, quest));
+		
+		quest_registry.removeQuestCompanion(this);
+		
+		this.removeSaveFile();
+	}
+	
 	public void onTaskStart() {
 		this.registerQCListener();
 		
-		this.getPlayer().sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Aufgabe " + (quest.getIndexOfTask(current_task) + 1) + "/" + quest.getTasks().size() + " der Quest " + quest.getName() + " angefangen!");
+		//this.getPlayer().sendMessage(ChatColor.GREEN + quest.getQuestNPC().getNPC().getFullName() + ":" + ChatColor.WHITE + " Aufgabe " + (quest.getIndexOfTask(current_task) + 1) + "/" + quest.getTasks().size() + " der Quest " + quest.getName() + " angefangen!");
 	}
 	
 	public void registerQCListener() {
@@ -146,7 +155,11 @@ public class QuestCompanion {
 				break;
 			case MONEY:
 				double refund = (double) reward.getActualReward();
+				
+				quest_registry.getPlugin().checkEconomy();
 				Economy econ = quest_registry.getPlugin().getEconomy();
+				
+				if(econ == null) break;
 				
 				econ.depositPlayer(player, refund);
 				player.sendMessage(ChatColor.GOLD + " - Du hast " + refund + " " + econ.currencyNamePlural() + " bekommen!");
@@ -181,15 +194,7 @@ public class QuestCompanion {
 	}
 	
 	public void onCurrentTaskRemoved() {
-		if(this.getPlayer().isOnline()) this.onTaskFinish();
-		else {
-			if(quest.getTasks().indexOf(current_task) == quest.getTasks().size() - 1) {
-				quest_registry.removeQuestCompanion(this);
-			}else {
-				current_task = quest.getNextTask(current_task);
-				this.setProgress(null);
-			}
-		}
+		this.onTaskFinish();
 	}
 	
 	public Player getPlayer() {
@@ -222,6 +227,17 @@ public class QuestCompanion {
 	
 	public void onPlayerDisconnect() {
 		this.onDisable();
+	}
+	
+	private void removeSaveFile() {
+		Bukkit.getScheduler().runTaskAsynchronously(quest_registry.getPlugin(), new Runnable() {
+			
+			public void run() {
+				File file = new File(quest_registry.getPlugin().getDataFolder() + "/companions/" + uuid + "_" + quest.getId() + ".yml");
+				file.delete();
+			}
+			
+		});
 	}
 	
 }

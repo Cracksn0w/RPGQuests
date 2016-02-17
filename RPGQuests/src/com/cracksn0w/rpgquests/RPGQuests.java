@@ -1,14 +1,16 @@
 package com.cracksn0w.rpgquests;
 
-//import java.util.ArrayList;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
+//import java.util.ArrayList;
 //import org.bukkit.Location;
 //import org.bukkit.Material;
 //import org.bukkit.entity.EntityType;
 //import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
 //import com.cracksn0w.rpgquests.quest.Quest;
 //import com.cracksn0w.rpgquests.quest.requirement.Requirement;
 //import com.cracksn0w.rpgquests.quest.requirement.RequirementType;
@@ -16,8 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 //import com.cracksn0w.rpgquests.quest.reward.RewardType;
 //import com.cracksn0w.rpgquests.quest.task.CollectTask;
 //import com.cracksn0w.rpgquests.quest.task.KillTask;
-//
-//import net.citizensnpcs.api.CitizensAPI;
+
 import net.milkbowl.vault.economy.Economy;
 
 public class RPGQuests extends JavaPlugin {
@@ -31,8 +32,8 @@ public class RPGQuests extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable() {
-		if(setupEconomy()) this.getLogger().info("Vault found!");
-		else this.getLogger().severe("Vault not found!");
+		if(checkEconomy()) this.getLogger().info("Vault gefunden!");
+		else this.getLogger().severe("Vault wurde nicht gefunden!");
 		
 		this.getConfig().options().copyHeader(true);
 		this.saveDefaultConfig();
@@ -52,12 +53,14 @@ public class RPGQuests extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		quest_registry.saveQuests();
+		
+		for(Player player : Bukkit.getOnlinePlayers()) quest_registry.saveQuestCompanions(player.getUniqueId());
 	}
 	
 	/**
 	 * @return Wurde das Wirtschaftssystem "Vault" gefunden oder nicht und ob der Variable "econ" ein Wert zugewiesen wurde.
 	 */
-	private boolean setupEconomy() {
+	public boolean checkEconomy() {
 		if(this.getServer().getPluginManager().getPlugin("Vault") == null) return false;
 		
 		RegisteredServiceProvider<Economy> rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
@@ -94,13 +97,13 @@ public class RPGQuests extends JavaPlugin {
 //		Reward mr = new Reward(RewardType.MONEY ,20.0);
 //		quest.addReward(mr);
 //		
-//		Reward ir = new Reward(RewardType.ITEM, new ItemStack(Material.WOOD, 3));
+//		Reward ir = new Reward(RewardType.ITEM, new ItemStack(Material.GRASS, 2));
 //		quest.addReward(ir);
 //		
-//		CollectTask ct = new CollectTask(Material.WOOL, 10, 1);
+//		CollectTask ct = new CollectTask(Material.GRASS, 3, 0);
 //		quest.addTask(ct);
 //		
-//		KillTask kt = new KillTask(EntityType.CHICKEN, 5);
+//		KillTask kt = new KillTask(EntityType.CHICKEN, 1);
 //		quest.addTask(kt);
 //		
 //		ArrayList<String> list = new ArrayList<>();

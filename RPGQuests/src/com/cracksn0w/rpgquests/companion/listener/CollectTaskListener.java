@@ -36,7 +36,7 @@ public class CollectTaskListener implements TaskListener {
 	
 	@EventHandler
 	public void onItemPickup(PlayerPickupItemEvent event) {
-		if(quest_companion.getPlayer() == event.getPlayer()) {
+		if(quest_companion.getUUID().equals(event.getPlayer().getUniqueId())) {
 			ItemStack stack = event.getItem().getItemStack();
 			CollectTask ct = (CollectTask) quest_companion.getCurrentTask();
 			
@@ -51,7 +51,7 @@ public class CollectTaskListener implements TaskListener {
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if((Player) event.getWhoClicked() == quest_companion.getPlayer()) {
+		if(quest_companion.getUUID().equals(event.getWhoClicked())) {
 			Player player = (Player) event.getWhoClicked();
 			ItemStack stack = event.getCurrentItem();
 			CollectTask ct = (CollectTask) quest_companion.getCurrentTask();

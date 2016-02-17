@@ -29,7 +29,7 @@ private QuestCompanion quest_companion;
 	public void onEntityDeath(EntityDeathEvent event) {
 		LivingEntity entity = event.getEntity();
 		
-		if(entity.getKiller() == quest_companion.getPlayer()) {
+		if(entity.getKiller().getUniqueId().equals(quest_companion.getUUID())) {
 			KillTask task = (KillTask) quest_companion.getCurrentTask();
 			
 			if(entity.getType() == task.getEntityType()) {

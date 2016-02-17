@@ -24,7 +24,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.cracksn0w.rpgquests.QuestRegistry;
-import com.cracksn0w.rpgquests.companion.QuestCompanion;
 
 public class PlayerListener implements Listener {
 
@@ -48,18 +47,20 @@ public class PlayerListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		
-		for(QuestCompanion qc : quest_registry.getQCsForPlayer(player)) {
-			qc.onPlayerConnect();
-		}
+		quest_registry.loadQuestCompanions(player.getUniqueId());
 	}
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		
-		for(QuestCompanion qc : quest_registry.getQCsForPlayer(player)) {
-			qc.onPlayerDisconnect();
-		}
+		Bukkit.getScheduler().runTaskAsynchronously(quest_registry.getPlugin(), new Runnable() {
+			
+			public void run() {
+				quest_registry.saveQuestCompanions(player.getUniqueId());
+			}
+			
+		});
 	}
 	
 	@EventHandler
@@ -165,10 +166,10 @@ public class PlayerListener implements Listener {
 				dropped_items.clear();
 				placed_blocks.clear();
 				
-				quest_registry.getPlugin().getLogger().info("Speicher gesäubert!");
+				quest_registry.getPlugin().getLogger().info("Speicher geleert!");
 			}
 			
-		}, 1200, quest_registry.getPlugin().getConfig().getInt("cleanup-intervall") * 1200);
+		}, 12000, quest_registry.getPlugin().getConfig().getInt("cleanup-intervall") * 1200);
 	}
 	
 }
