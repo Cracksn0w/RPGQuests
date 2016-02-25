@@ -1,7 +1,6 @@
 package com.cracksn0w.rpgquests.companion.listener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -13,9 +12,6 @@ import org.bukkit.inventory.ItemStack;
 
 import com.cracksn0w.rpgquests.companion.QuestCompanion;
 import com.cracksn0w.rpgquests.quest.task.CollectTask;
-
-import net.milkbowl.vault.item.ItemInfo;
-import net.milkbowl.vault.item.Items;
 
 public class CollectTaskListener implements TaskListener {
 
@@ -80,10 +76,7 @@ public class CollectTaskListener implements TaskListener {
 				if(progress > ct.getAmount()) progress = ct.getAmount();
 				
 				quest_companion.setProgress(progress);
-				
-				ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMaterialData());
-				
-				player.sendMessage(ChatColor.GREEN + quest_companion.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + ct.getAmount() + " " + iteminfo.getName() + " gesammelt.");
+				player.sendMessage(quest_companion.getProgressMsg());
 			}
 			
 			if(progress >= ct.getAmount()) {

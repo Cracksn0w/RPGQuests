@@ -1,7 +1,6 @@
 package com.cracksn0w.rpgquests.companion.listener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -36,8 +35,7 @@ private QuestCompanion quest_companion;
 				if(progress < task.getAmount()) {
 					progress ++;
 					quest_companion.setProgress(progress);
-					
-					quest_companion.getPlayer().sendMessage(ChatColor.GREEN + quest_companion.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + task.getAmount() + " " + task.getEntityType().toString() + " getötet.");
+					quest_companion.getPlayer().sendMessage(quest_companion.getProgressMsg());
 				}
 				
 				if(progress == task.getAmount()) {

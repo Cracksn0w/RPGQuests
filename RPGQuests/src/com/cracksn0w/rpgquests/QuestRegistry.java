@@ -118,6 +118,16 @@ public class QuestRegistry {
 		return result;
 	}
 	
+	public QuestCompanion getQCForQuest(UUID uuid, Quest quest) {
+		for(QuestCompanion qc : quest_companions) {
+			if(qc.getUUID().equals(uuid) && qc.getQuest() == quest) {
+				return qc;
+			}
+		}
+		
+		return null;
+	}
+	
 	public ArrayList<QuestCompanion> getQCsForUUID(UUID uuid) {
 		ArrayList<QuestCompanion> result = new ArrayList<>();
 		
@@ -229,7 +239,14 @@ public class QuestRegistry {
 					ConfigurationSection npc_section = config.getConfigurationSection("npc");
 					
 					int npc_id = npc_section.getInt("id");
-					Location npc_loc = (Location) npc_section.get("location");
+					
+					String world = npc_section.getString("world");
+					int x = npc_section.getInt("x");
+					int y = npc_section.getInt("y");
+					int z = npc_section.getInt("z");
+					
+					Location npc_loc = new Location(Bukkit.getWorld(world), x, y, z);
+					
 					List<String> npc_msg = npc_section.getStringList("message");
 					
 					quests.add(new Quest(reg, name, id, npc_id, npc_loc, npc_msg, tasks, rewards, requirements, enabled));
@@ -305,7 +322,12 @@ public class QuestRegistry {
 			ConfigurationSection npc = config.createSection("npc");
 			
 			npc.set("id", quest.getQuestNPC().getid());
-			npc.set("location", quest.getQuestNPC().getLocation());
+			
+			npc.set("world", quest.getQuestNPC().getLocation().getWorld().getName());
+			npc.set("x", quest.getQuestNPC().getLocation().getBlockX());
+			npc.set("y", quest.getQuestNPC().getLocation().getBlockY());
+			npc.set("z", quest.getQuestNPC().getLocation().getBlockZ());
+			
 			npc.set("message", quest.getQuestNPC().getMessage());
 			
 			try {

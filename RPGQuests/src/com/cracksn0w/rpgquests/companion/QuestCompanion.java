@@ -127,10 +127,12 @@ public class QuestCompanion {
 		switch(current_task.getTaskType()) {
 		case COLLECT:
 			quest_listener = new CollectTaskListener(this);
+			progress = 0;
 			
 			break;
 		case KILL:
 			quest_listener = new KillTaskListener(this);
+			progress = 0;
 			
 			break;
 		default:
@@ -218,6 +220,22 @@ public class QuestCompanion {
 			quest_registry.getPlugin().getLogger().severe("QuestCompanion | UUID: " + uuid + " | Unbekannter TaskType!");
 			
 			break;
+		}
+	}
+	
+	public String getProgressMsg() {
+		switch(current_task.getTaskType()) {
+		case COLLECT:
+			CollectTask ct = (CollectTask) current_task;
+			ItemInfo iteminfo = Items.itemByType(ct.getMaterial(), (short) ct.getMaterialData());
+			
+			return ChatColor.GREEN + this.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + ct.getAmount() + " " + iteminfo.getName() + " gesammelt.";
+		case KILL:
+			KillTask kt = (KillTask) current_task;
+			
+			return ChatColor.GREEN + this.getQuest().getName() + ": " + ChatColor.GRAY + "Du hast " + progress + "/" + kt.getAmount() + " " + kt.getEntityType().toString() + " getötet.";
+		default:
+			return null;
 		}
 	}
 	

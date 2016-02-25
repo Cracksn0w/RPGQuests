@@ -6,23 +6,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-//import java.util.ArrayList;
-//import org.bukkit.Location;
-//import org.bukkit.Material;
-//import org.bukkit.entity.EntityType;
-//import org.bukkit.inventory.ItemStack;
-//import com.cracksn0w.rpgquests.quest.Quest;
-//import com.cracksn0w.rpgquests.quest.requirement.Requirement;
-//import com.cracksn0w.rpgquests.quest.requirement.RequirementType;
-//import com.cracksn0w.rpgquests.quest.reward.Reward;
-//import com.cracksn0w.rpgquests.quest.reward.RewardType;
-//import com.cracksn0w.rpgquests.quest.task.CollectTask;
-//import com.cracksn0w.rpgquests.quest.task.KillTask;
+import com.cracksn0w.rpgquests.commands.q.QCommand;
 
 import net.milkbowl.vault.economy.Economy;
 
 public class RPGQuests extends JavaPlugin {
-
+	
 	private Economy econ;
 	
 	private QuestRegistry quest_registry;
@@ -47,7 +36,7 @@ public class RPGQuests extends JavaPlugin {
 		
 		quest_registry = new QuestRegistry(this);
 		
-//		test();
+		this.registerCommands();
 	}
 	
 	@Override
@@ -83,42 +72,12 @@ public class RPGQuests extends JavaPlugin {
 		return quest_registry;
 	}
 	
-//	/**
-//	 * Test methode.
-//	 */
-//	private void test() {
-//		
-//		Quest quest = quest_registry.createQuest("Quest 1", "Thomas Müller");
-//		quest.setEnabled(true);
-//		
-//		Requirement rq = new Requirement(RequirementType.LEVEL, 1);
-//		quest.addRequirement(rq);
-//		
-//		Reward mr = new Reward(RewardType.MONEY ,20.0);
-//		quest.addReward(mr);
-//		
-//		Reward ir = new Reward(RewardType.ITEM, new ItemStack(Material.GRASS, 2));
-//		quest.addReward(ir);
-//		
-//		CollectTask ct = new CollectTask(Material.GRASS, 3, 0);
-//		quest.addTask(ct);
-//		
-//		KillTask kt = new KillTask(EntityType.CHICKEN, 1);
-//		quest.addTask(kt);
-//		
-//		ArrayList<String> list = new ArrayList<>();
-//		list.add("Das ist eine Quest zum testen der Funktionsweise!");
-//		list.add("Funktioniert doch super oder?!");
-//		list.add("Man kann machen was man will ist das nicht toll!?");
-//		
-//		quest.getQuestNPC().setMessage(list);
-//		
-//		quest.spawnQuestNPC(new Location(this.getServer().getWorld("world"), 475, 67, -263));
-//		
-//	}
-	
 	public Economy getEconomy() {
 		return econ;
+	}
+	
+	private void registerCommands() {
+		this.getCommand("q").setExecutor(new QCommand(this));
 	}
 	
 }
