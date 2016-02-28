@@ -18,11 +18,6 @@ public class QuestNPC {
 	private NPC npc;
 	private int id;
 	
-	private String world;
-	private int x;
-	private int y;
-	private int z;
-	
 	private List<String> message;
 	
 	private InteractionListener interaction_listener;
@@ -36,15 +31,6 @@ public class QuestNPC {
 		this.message = new ArrayList<>();
 		
 		interaction_listener = new InteractionListener(this);
-	}
-	
-	public QuestNPC(Quest quest, int id, String world, int x, int y, int z) {
-		this.quest = quest;
-		this.id = id;
-		this.setWorld(world);
-		this.setX(x);
-		this.setY(y);
-		this.setZ(z);
 	}
 	
 	public void setMessage(List<String> message2) {
@@ -74,38 +60,6 @@ public class QuestNPC {
 	public void remove() {
 		CitizensAPI.getNPCRegistry().deregister(npc);
 		HandlerList.unregisterAll(interaction_listener);
-	}
-
-	public String getWorld() {
-		return world;
-	}
-
-	public void setWorld(String world) {
-		this.world = world;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getZ() {
-		return z;
-	}
-
-	public void setZ(int z) {
-		this.z = z;
 	}
 	
 }

@@ -73,17 +73,6 @@ public class Quest {
 		this.enabled = enabled;
 	}
 	
-	public Quest(String name, int id, int npc_id, String world, int x, int y, int z, List<String> message, List<Task> tasks, List<Reward> rewards, List<Requirement> requirements, boolean enabled) {
-	    this.name = name;
-		this.id = id;
-		this.questnpc = new QuestNPC(this, npc_id, world, x, y, z);
-		questnpc.setMessage(message);
-		this.tasks = tasks;
-		this.rewards = rewards;
-		this.requirements = requirements;
-		this.enabled = enabled;
-	}
-	
 	/**
 	 * Gibt den Namen der Quest zurück.
 	 * 
