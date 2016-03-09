@@ -40,8 +40,12 @@ public class QCommand implements CommandExecutor {
 				
 			}else {
 				
-				switch(args[0]) {
+				switch(args[0].toLowerCase()) {
 				case "progress":
+					if(args.length == 1) {
+						player.sendMessage(ChatColor.RED + "/q progress <id>");
+						return true;
+					}
 					
 					progress.onCommand(player, Arrays.copyOfRange(args, 1, args.length));
 					break;

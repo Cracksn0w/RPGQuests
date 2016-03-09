@@ -8,6 +8,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.cracksn0w.rpgquests.commands.q.QCommand;
 
+//Vault API --> http://dev.bukkit.org/bukkit-plugins/vault/
+
+//Citizens2 API --> http://wiki.citizensnpcs.co/Downloads
+
 import net.milkbowl.vault.economy.Economy;
 
 public class RPGQuests extends JavaPlugin {
@@ -17,7 +21,7 @@ public class RPGQuests extends JavaPlugin {
 	private QuestRegistry quest_registry;
 	
 	/**
-	 * Einstieg in das Programm. Erste Methode die aufgerufen wird.
+	 * Diese Methode wird vom PluginManager aufgerufen, wenn das Plugin geladen wurde. Sie ist der Einstieg in den Programm ablauf.
 	 */
 	@Override
 	public void onEnable() {
@@ -27,7 +31,7 @@ public class RPGQuests extends JavaPlugin {
 		this.getConfig().options().copyHeader(true);
 		this.saveDefaultConfig();
 		
-		if(setupCitizens()) this.getLogger().info("Citizens found!");
+		if(isCitizensInstalled()) this.getLogger().info("Citizens found!");
 		else {
 			this.getLogger().severe("Citizens not found! Shutting down...");
 			this.getServer().getPluginManager().disablePlugin(this);
@@ -39,6 +43,9 @@ public class RPGQuests extends JavaPlugin {
 		this.registerCommands();
 	}
 	
+	/**
+	 * Diese Methode wird vom PluginManager aufgerufen, wenn der Server beendet wird.
+	 */
 	@Override
 	public void onDisable() {
 		quest_registry.saveQuests();
@@ -47,7 +54,9 @@ public class RPGQuests extends JavaPlugin {
 	}
 	
 	/**
-	 * @return Wurde das Wirtschaftssystem "Vault" gefunden oder nicht und ob der Variable "econ" ein Wert zugewiesen wurde.
+	 * Überprüft, ob das Plugin Vault gefunden wurde. Das Plugin Vault bietet ein Wirtschaftssystem.
+	 * 
+	 * @return Wahr, wenn das Plugin Vault gefunden wurde.
 	 */
 	public boolean checkEconomy() {
 		if(this.getServer().getPluginManager().getPlugin("Vault") == null) return false;
@@ -61,17 +70,24 @@ public class RPGQuests extends JavaPlugin {
 		return false;
 	}
 	
-	/**
-	 * @return Wurde das Plugin "Citizens" gefunden oder nicht.
-	 */
-	private boolean setupCitizens() {
+	private boolean isCitizensInstalled() {
 		return this.getServer().getPluginManager().isPluginEnabled("Citizens");
 	}
 	
+	/**
+	 * Gibt eine Instanz der aktuellen QuestRegistry zurück.
+	 * 
+	 * @return Aktuelle QuestRegistry
+	 */
 	public QuestRegistry getQuestRegistry() {
 		return quest_registry;
 	}
 	
+	/**
+	 * Gibt eine Instanz des Wirtschaftssystem zurück.
+	 * 
+	 * @return Das aktuelle Wirtschaftssystem.
+	 */
 	public Economy getEconomy() {
 		return econ;
 	}

@@ -34,7 +34,13 @@ public class QuestCompanion {
 	
 	private TaskListener quest_listener;
 	
-	//Konstruktor wird fuer einen neuen QuestCompanion benutzt
+	/**
+	 * Dieser Konstuktor wird benutzt, wenn man einen neuen QuestCompanion erstellen will.
+	 * 
+	 * @param quest_registry Die aktuelle QuestRegistry.
+	 * @param player Der Spieler.
+	 * @param quest Die Quest.
+	 */
 	public QuestCompanion(QuestRegistry quest_registry, Player player, Quest quest) {
 		this.quest_registry = quest_registry;
 		this.uuid = player.getUniqueId();
@@ -48,7 +54,15 @@ public class QuestCompanion {
 		this.onTaskStart();
 	}
 	
-	//Konstruktor wird benutzt nachdem ein QuestCompanion vom Dateisystem geladen wurde
+	/**
+	 * Dieser Konstruktor wird benutzt, wenn man einen vorhandenen QuestCompanion erstellen will.
+	 * 
+	 * @param quest_registry Die aktuelle QuestRegistry.
+	 * @param uuid Die UUID des Spielers.
+	 * @param quest Die Quest.
+	 * @param current_task Der aktuelle Arbeitsschritt.
+	 * @param progress Der Fortschritt des Spielers.
+	 */
 	public QuestCompanion(QuestRegistry quest_registry, UUID uuid, Quest quest, Task current_task, Object progress) {
 		this.quest_registry = quest_registry;
 		this.uuid = uuid;
